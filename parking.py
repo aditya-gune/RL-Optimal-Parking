@@ -18,7 +18,7 @@ class Parking_MDP(MDP):
     def __init__(self, rows, R_coll = -10000, R_np = -1, R_p = 10, R_handicap = -100):
         self.rows = rows
         self.n = 8 * rows + 1
-        self.m = 3
+        self.m = 3  #0 = park, 1 = drive, 2 = exit
         self.terminal = self.n - 1
         self.T=[]
         self.R  = np.zeros((self.n, 1))
@@ -54,4 +54,54 @@ class Parking_MDP(MDP):
                 for row in range(rows):
                     for occupied in range(2):
                         for parked in range(2):
-                           
+                            current = self.stateproperties[(col, row, occupied, parked)]
+                            if action == 0: #park
+                                if parked == 0:
+                                    s_next = self.stateproperties[(col, row, occupied, 1)]
+                                    self.T[action][current, s_next] = 1
+                            if action == 1: #drive
+                                if parked == 0:
+                                    if col == 0 and row == 0:
+                                        col_next = 1
+                                        row_next = 0
+                                    elif col == 0  and row > 0:
+                                        col_next = col
+                                        row_next = row
+                                    elif col == 1 and row == self.rows -1:
+                                        col_next = 1
+                                        row_next = row
+                                    elif col == 1:
+                                        col_next = col
+                                        row_next = row
+                                    
+                                    s_1 = self.stateproperties[(col_next, row_next, 0, parked)]
+                                    s_2 = self.stateproperties[(col_next, row_next, 1, parked)]
+                                    if row == 0:
+                                        spot_occupied = 0.00000001
+                                    else:
+                                        spot_occupied = (self.rows - row)/self.rows
+                                    self.T[action][current, s_1]= 1 - spot_occupied
+                                    self.T[action][current, s_2] = spot_occupied
+                                    
+                            if action == 2: #exit
+                                if parked == 1:
+                                    s_next = self.terminal
+                                    self.T[action][current, s_next] = 1
+    def getMDP(self):
+        return(self.n, self.m, self.T, self.R)
+    
+    def writeMDP(self, t):
+        str0 = str(self.n) + ' ' + str(self.m)
+        t.write(str0)
+        for i in self.T:
+            t.write('\n\n')
+            str1 = ''
+            for j in i:
+                for k in j:
+                    str1 = str1 + str(k)+'\t'
+            str1 = str1+'\n'
+            t.write(str1)
+        str2=''
+        for i in self.R:
+            str2 = str2 + str(float(i[0]))+'\t'
+        t.write(str2)
