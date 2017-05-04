@@ -49,12 +49,15 @@ class Parking_MDP(MDP):
         for action in range(self.m):
             self.T.append(np.zeros((self.n,self.n)))
         
+        
+        
         for action in range(self.m):
             for col in range(2):
                 for row in range(rows):
                     for occupied in range(2):
                         for parked in range(2):
                             current = self.stateproperties[(col, row, occupied, parked)]
+                            #print(current)
                             if action == 0: #park
                                 if parked == 0:
                                     s_next = self.stateproperties[(col, row, occupied, 1)]
@@ -93,14 +96,18 @@ class Parking_MDP(MDP):
     def writeMDP(self, t):
         str0 = str(self.n) + ' ' + str(self.m)
         t.write(str0)
+        t.write('\n')
         for i in self.T:
-            t.write('\n\n')
-            str1 = ''
+            t.write('\n')
+            #str1 = ''
             for j in i:
+                str1 = ''
                 for k in j:
                     str1 = str1 + str(k)+'\t'
-            str1 = str1+'\n'
-            t.write(str1)
+                str1 += '\n'
+                t.write(str1)
+                #print(len(str1))
+            t.write('\n')
         str2=''
         for i in self.R:
             str2 = str2 + str(float(i[0]))+'\t'

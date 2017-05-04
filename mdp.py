@@ -27,16 +27,19 @@ class MDP:
                 l = l.strip()
                 l = re.findall(r"[-+]?\d*\.\d+|\d+", l)
                 matrix.append(l)
+        print(len(matrix))
         return matrix
     
     def process_MDP(self, matrix):
         l = matrix
         tempAction = []
+        print(len(matrix))
         self.n = int(l[0][0])
         self.m = int(l[0][1])
         self.R = l[-1]
         del l[0]
         del l[-1]
+        
         for item in l:
             if item != []:
                 ti = []
@@ -50,6 +53,9 @@ class MDP:
         del l
         del self.T[0]
         self.R = np.array(self.R)
+        for i in self.T:
+            if [] in self.T:
+                self.T.remove([])
         return (self.n, self.m, self.R, self.T)
     
     def tval(self, state, action):
