@@ -56,7 +56,7 @@ class MDP:
         for i in self.T:
             if [] in self.T:
                 self.T.remove([])
-        return (self.n, self.m, self.R, self.T)
+        return self.get_MDP()
     
-    def tval(self, state, action):
-        return self.T[action][state:]
+    def get_MDP(self):
+        return (self.n, self.m, self.R, self.T)
