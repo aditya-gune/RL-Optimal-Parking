@@ -62,6 +62,10 @@ class Parking_MDP(MDP):
                                 if parked == 0:
                                     s_next = self.stateproperties[(col, row, occupied, 1)]
                                     self.T[action][current, s_next] = 1
+                                else:
+                                    s_next = self.terminal
+                                    self.T[action][current, s_next] = 1
+                                    
                             if action == 1: #drive
                                 if parked == 0:
                                     if col == 0 and row == 0:
@@ -80,9 +84,10 @@ class Parking_MDP(MDP):
                                     s_1 = self.stateproperties[(col_next, row_next, 0, parked)]
                                     s_2 = self.stateproperties[(col_next, row_next, 1, parked)]
                                     if row == 0:
-                                        spot_occupied = 0.00000001
+                                        spot_occupied = 0.001
                                     else:
                                         spot_occupied = (self.rows - row)/self.rows
+                                        
                                     self.T[action][current, s_1]= 1 - spot_occupied
                                     self.T[action][current, s_2] = spot_occupied
                                     
