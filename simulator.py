@@ -34,36 +34,25 @@ class Simulator:
     
     def take_action(self, action):
         current = int(self.current)
-        #print("taking action...")
         if self.terminal:
-            #print("terminal state, returning...")
             return
         
         tarray = np.array(range(self.states))
         tvals = self.T[action][current]
-        print("tval indices = ", action, current)
-        
-#        if np.sum(tvals) == 0:
-#            print("Sum(tvals) = ", np.sum(tvals),", returning...")
-#            return
 
         distribution = np.add.accumulate(tvals)
-        print("dist ", distribution)
         randnum = np.random.random_sample(1)
-        print("randnum = ", randnum)
         index = np.digitize(randnum, distribution)[0]
-        print("index = ",index)
         s_next = tarray[index-1]
         self.current = s_next
         
         self.terminal = True
         for action in range(self.actions):
-            print("current = ", current)
             tvals = self.T[action][current]
             if np.sum(tvals) > 0:
                 self.terminal = False
                 break
-        print('action terminal')
+        #print('action terminal')
         
         
         

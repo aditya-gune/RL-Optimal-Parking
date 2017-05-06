@@ -10,64 +10,54 @@ from valueiter import *
 from parking import Parking_MDP
 from simulator import Simulator
 from qlearning import Qlearning
-
+from policygen import *
 #Set up environment
 beta = 0.9
 epsilon = 0.00001
-numrows = 10
+numrows = 11
 
-mdp = MDP()
-
-#section = 1 FOR CREATING A PARKING MDP
-#section = 2 FOR VALUE ITERATION
-#sim = 1 FOR RUNNING A SIMULATION
-#qlearn = 1 FOR QLEARNING 
-section = 1
-sim = 0
+"""
+SETTINGS:
+createMDP = 1 FOR CREATING A PARKING MDP
+valiter = 1 FOR VALUE ITERATION
+sim = 1 FOR RUNNING A SIMULATION
+qlearn = 1 FOR QLEARNING
+"""
+createMDP = 1
+valiter = 0
+sim = 1
 qlearn = 0
 
-if section < 1 and sim < 1 and qlearn < 1:
-    #exit()
-
-if section == 1:
-    parking_mdp = Parking_MDP(rows=numrows, R_handicap=-100, R_coll=-10000)
-    parkingfile = open('ParkingMDP4.txt', 'w')
-    (states, actions, T, R) = parking_mdp.getMDP()
-    parking_mdp.writeMDP(parkingfile)
+#Write an MDP to a file
+if createMDP == 1:
+    mdp1 = Parking_MDP(rows=10, R_handicap=-100, R_coll=-10000)
+    parkingfile = open('ParkingMDP1.txt', 'w')
+    (states1, actions1, T1, R1) = mdp1.getMDP()
+    mdp1.writeMDP(parkingfile)
+    parkingfile.close()
+    mdp2 = Parking_MDP(rows=11, R_handicap=-100, R_coll=-10000)
+    parkingfile = open('ParkingMDP2.txt', 'w')
+    (states2, actions2, T2, R2) = mdp2.getMDP()
+    mdp2.writeMDP(parkingfile)
     parkingfile.close()
 
-if section == 2:
-    t = open('output.txt', 'w+')
-    
-    if len(sys.argv) > -1:
-        k = mdp.read_MDP_from_file('ParkingMDP3.txt')
-    else:
-        print("No input file specified!")
-        #exit()
-        
-    (states, actions, R, T) = mdp.process_MDP(k)
-    
-    (V, pi) = value_iter(states, actions, R, T, t, beta, epsilon)
-    print("Optimal Value Function:")
-    t.write("Optimal Value Function:\n")
-    for x in V:
-        print(x)
-        t.write(str(x)+'\n')
-    print
-    t.write('\n')
-    print("Optimal Policy:")
-    t.write("Optimal Policy:\n")
-    for x in pi:
-        print(x)
-        t.write(str(x)+'\n')
-    t.close()
-
 if sim == 1:
-    simulator = Simulator((states, actions, R, T))
-    (R_tot, actions_taken, states_visited) = simulator.runPolicy(pi)
-    print("Reward: ", R_tot)
-    print('Actions Taken: \n', actions_taken)
-    print('States Visited: \n', states_visited)
+    
+    if mdp1 is None or mdp2 is None:
+        print("Please run again with section set to 1")
+    else:
+        
+        #option=1 for random,
+        #option=2 for avoid collisions,
+        #option=3 for greedy 
+        policy1 = generate_policy(numrows, option=1)
+        
+    
+        simulator = Simulator((states1, actions1, R1, T1))
+        (R_tot, actions_taken, states_visited) = simulator.runPolicy(policy1)
+        print("Reward: ", R_tot)
+        print('Actions Taken: \n', actions_taken)
+        print('States Visited: \n', states_visited)
 
 R_avg = []
 
@@ -85,3 +75,22 @@ if qlearn == 1:
 
 
 
+if valiter == 1:
+    #Read in an MDP from a file    
+    k = mdp.read_MDP_from_file('ParkingMDP1.txt')    
+    (states, actions, R, T) = mdp.process_MDP(k)
+    t = open('output.txt', 'w+')
+    (V, pi) = value_iter(states, actions, R, T, t, beta, epsilon)
+    print("Optimal Value Function:")
+    t.write("Optimal Value Function:\n")
+    for x in V:
+        print(x)
+        t.write(str(x)+'\n')
+    print
+    t.write('\n')
+    print("Optimal Policy:")
+    t.write("Optimal Policy:\n")
+    for x in pi:
+        print(x)
+        t.write(str(x)+'\n')
+    t.close()

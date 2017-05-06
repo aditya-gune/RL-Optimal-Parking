@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu May 04 11:13:08 2017
-
-@author: Aditya
+Qlearning
 """
 import numpy as np
 from simulator import Simulator

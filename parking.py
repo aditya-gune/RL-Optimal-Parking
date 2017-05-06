@@ -46,6 +46,7 @@ class Parking_MDP(MDP):
                                 self.R[i] = R_p * (self.rows - row)
                         else:
                             self.R[i]=R_np
+                        i += 1
         for action in range(self.m):
             self.T.append(np.zeros((self.n,self.n)))
         
@@ -97,6 +98,14 @@ class Parking_MDP(MDP):
                                     self.T[action][current, s_next] = 1
     def getMDP(self):
         return(self.n, self.m, self.T, self.R)
+    
+    def getstateinfo(self, state):
+        try:
+            (c, r, o, p) = self.stateinfo[state]
+            return (c, r, o, p)
+        except KeyError:
+            print("No such state!")
+       
     
     def writeMDP(self, t):
         str0 = str(self.n) + ' ' + str(self.m)
