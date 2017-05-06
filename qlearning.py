@@ -75,12 +75,13 @@ class Qlearning:
             return r.randint(0, n-1)
         else:
             return np.argmax(self.q_table[self.current:])
-   
-    def _update(self, s, a, ns, r):
+    def getQtable(self):
+        return self.q_table
+    def _update(self, s, a, ns, reward):
         m = self.q_table.shape[1]
         V = self.q_table[s][a]
         E_star = np.max([self.q_table[ns][i] for i in range(m)])
-        V_opt = r + self.beta * E_star
+        V_opt = reward + self.beta * E_star
         update = self.alpha * (V_opt - V)
         V += update
         return V
@@ -89,6 +90,6 @@ class Qlearning:
         for i in range(len(actions_taken)-1, 0, -1):
             s = states_visited[i]
             a = actions_taken[i]
-            r = R_vals[i]
+            reward = R_vals[i]
             ns = states_visited[i+1]
-            self.q_table[s][a] = self._update(s, a, ns, r)
+            self.q_table[s][a] = self._update(s, a, ns, reward)

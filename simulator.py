@@ -21,7 +21,7 @@ class Simulator:
         return self.current
     
     def get_R(self):
-        return self.R_tot
+        return float(self.R[self.current])
     
     def runPolicy(self, policy):
         while not self.terminal:
@@ -34,6 +34,7 @@ class Simulator:
     
     def take_action(self, action):
         current = int(self.current)
+        
         if self.terminal:
             return
         
@@ -43,16 +44,20 @@ class Simulator:
         distribution = np.add.accumulate(tvals)
         randnum = np.random.random_sample(1)
         index = np.digitize(randnum, distribution)[0]
-        s_next = tarray[index-1]
-        self.current = s_next
+        if index < self.states-2:
+            s_next = tarray[index]
+            self.current = s_next
+        else:
+            self.terminal = True
+            return
+        
         
         self.terminal = True
         for action in range(self.actions):
             tvals = self.T[action][current]
-            if np.sum(tvals) > 0:
+            if np.sum(tvals) > 0 and self.current < self.states-2:
                 self.terminal = False
                 break
-        #print('action terminal')
         
         
         

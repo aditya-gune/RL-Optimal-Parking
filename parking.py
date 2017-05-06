@@ -15,7 +15,7 @@ R_handicap = reward for parking in handicapped spot
 """
 
 class Parking_MDP(MDP):
-    def __init__(self, rows, R_coll = -10000, R_np = -1, R_p = 10, R_handicap = -100):
+    def __init__(self, rows, R_coll = -10000, R_np = 0, R_p = 10, R_handicap = -100):
         self.rows = rows
         self.n = 8 * rows + 1
         self.m = 3  #0 = park, 1 = drive, 2 = exit
@@ -104,7 +104,8 @@ class Parking_MDP(MDP):
             (c, r, o, p) = self.stateinfo[state]
             return (c, r, o, p)
         except KeyError:
-            print("No such state!")
+            print("Terminal state!")
+            return (-1,-1,-1,-1)
        
     
     def writeMDP(self, t):

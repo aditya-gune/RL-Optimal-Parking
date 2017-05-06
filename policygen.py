@@ -8,15 +8,12 @@ from parking import Parking_MDP
 
 
 
-def generate_greedy_driver(numrows):    #deterministically parks in an open spot
+def generate_selfish_driver(numrows):    #deterministically parks in an open spot
     mdp = Parking_MDP(rows=numrows, R_handicap=-100, R_coll=-10000)
     (states, actions, T, R) = mdp.getMDP()
     pi = []
     for i in range(states):
-        (c,r,o,p) = mdp.getstateinfo(i)
-        if p > 0:
-            pi.append(2)
-        elif o > 0:
+        if R[i] < -100:
             pi.append(1)
         else:
             pi.append(0)
@@ -31,8 +28,7 @@ def generate_avoid_collisions(numrows, p):
         if parked == 1:
             pi.append(2)
         else:
-            (c,r,o,p) = mdp.getstateinfo(i)
-            if o > 0:
+            if R[i] < 0:
                 pi.append(1)
             else:
                 if np.random.uniform() < p:
@@ -63,4 +59,4 @@ def generate_policy(numrows,option=1, p = 0.5):
     elif option == 2:
         return generate_avoid_collisions(numrows, p)
     elif option==3:
-        return generate_greedy_driver(numrows)
+        return generate_selfish_driver(numrows)
